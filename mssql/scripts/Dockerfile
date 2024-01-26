@@ -12,10 +12,12 @@ ENV MSSQL_BACKUP_DIR=${MSSQL_BACKUP_DIR:-/var/opt/sqlserver/backup}
 COPY . .
 ENTRYPOINT [ "/bin/bash", "./entrypoint.sh" ]
 
+USER root 
+
 # creating directories
-RUN mkdir /var/opt/sqlserver
-RUN mkdir /var/opt/sqlserver/data
-RUN mkdir /var/opt/sqlserver/log
-RUN mkdir /var/opt/sqlserver/backup
+RUN mkdir -p /var/opt/sqlserver
+RUN mkdir -p /var/opt/sqlserver/data
+RUN mkdir -p /var/opt/sqlserver/log
+RUN mkdir -p /var/opt/sqlserver/backup
 
 CMD [ "/opt/mssql/bin/sqlservr" ]

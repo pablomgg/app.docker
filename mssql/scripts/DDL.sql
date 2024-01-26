@@ -164,36 +164,3 @@ IF (NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'db
 ELSE
 	PRINT 'Table PersonEmail exist';
 GO
-
-IF (NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'PersonEmailType'))
-	BEGIN
-		CREATE TABLE PersonEmailType ( 
-			Id int not null, 
-			Name varchar(120) not null,
-			Actived bit not null,
-			CONSTRAINT PK_PersonEmailType PRIMARY KEY (Id) 
-		);
-		
-		PRINT 'Created table PersonEmailType';
-	END
-ELSE
-	PRINT 'Table PersonEmailType exist';
-GO
-
-IF (NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'PersonEmail'))
-	BEGIN
-		CREATE TABLE PersonEmail ( 
-			Id int not null identity(1,1), 
-			PersonId int not null, 
-			Address varchar(120) not null, 
-			TypeId int not null, 
-			CONSTRAINT PK_PersonEmail PRIMARY KEY (Id), 
-			CONSTRAINT FK_PersonEmail_Person FOREIGN KEY (PersonId) REFERENCES Person (Id), 
-			CONSTRAINT FK_PersonEmail_PersonEmailType FOREIGN KEY (TypeId) REFERENCES PersonEmailType (Id) 
-		);
-		
-		PRINT 'Created table PersonEmail';
-	END
-ELSE
-	PRINT 'Table PersonEmail exist';
-GO

@@ -18,11 +18,12 @@ services:
       - "./traefik/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml"
 
   mssql:
-    container_name: sql-server2019
+    hostname: "sql-server2019"
+    container_name: "sql-server2019"
     build:
       context: ./mssql/scripts
       dockerfile: Dockerfile
-    # image:
+    image: "sql-server2019"
     #   - mcr.microsoft.com/mssql/server:2019-latest
     volumes:
       - sqlsystem:/var/opt/mssql/
@@ -59,6 +60,7 @@ services:
 
   # ui-app:
   #   container_name: "ui-app"
+  #   hostname: "ui-api"
   #   build:
   #     context: ../path-project-with-dockerfile
   #     dockerfile: Dockerfile-Name
