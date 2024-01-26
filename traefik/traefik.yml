@@ -1,0 +1,28 @@
+log:
+  level: INFO
+
+api:
+  insecure: true
+  dashboard: true
+  debug: true
+
+global:
+  checknewversion: true                       # Periodically check if a new version has been released.
+  sendanonymoususage: true                    # Periodically send anonymous usage statistics.
+
+serversTransport:
+  insecureSkipVerify: true
+
+entryPoints:
+  # Not used in apps, but redirect everything from HTTP to HTTPS
+  web:
+    address: :80
+
+providers:
+  file:
+    filename: /etc/traefik/dynamic_conf.yml
+    watch: true
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  providersThrottleDuration: 10

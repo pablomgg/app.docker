@@ -1,0 +1,85 @@
+version: '3.9'
+
+services:
+  traefik:
+    image: "traefik:v2.9"
+    container_name: "traefik"
+    hostname: "traefik"
+    command:
+      - "--configFile=./traefik/traefik.yml"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - proxy
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/traefik.yml:/traefik.yml:ro"
+      - "./traefik/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml"
+
+  mssql:
+    container_name: sql-server2019
+    build:
+      context: ./mssql/scripts
+      dockerfile: Dockerfile
+    # image:
+    #   - mcr.microsoft.com/mssql/server:2019-latest
+    volumes:
+      - sqlsystem:/var/opt/mssql/
+      - sqldata:/var/opt/sqlserver/data
+      - sqllog:/var/opt/sqlserver/log
+      - sqlbackup:/var/opt/sqlserver/backup
+    ports:
+      - '1433:1433'
+    networks:
+      - proxy
+
+  # app-api:
+  #   container_name: "app-api"
+  #   hostname: "app-api"
+  #   build:
+  #     context: ../path-project-with-dockerfile
+  #     dockerfile: Dockerfile-Name
+  #   labels:
+  #     - "traefik.enable=true"
+  #   restart: unless-stopped
+  #   environment:
+  #     ConnectionStrings__SqlServer: "Server=mssql;Initial Catalog=Example;User Id=sa;Password=SiriemaB@nguela5"
+  #     ASPNETCORE_ENVIRONMENT: Local
+  #     # ASPNETCORE_URLS: "http://+:80"
+  #     # ASPNETCORE_HTTPS_PORT: "44300"
+  #   ports:
+  #     - "9010:80"
+  #   image: image-app-api
+  #   networks:
+  #     - proxy
+  #   depends_on:
+  #     - traefik
+  #     - mssql
+
+  # ui-app:
+  #   container_name: "ui-app"
+  #   build:
+  #     context: ../path-project-with-dockerfile
+  #     dockerfile: Dockerfile-Name
+  #   labels:
+  #     - "traefik.enable=true"
+  #   restart: unless-stopped
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: Local
+  #   ports:
+  #     - "4200:80"
+  #   image: image-ui-app
+  #   depends_on:
+  #     - traefik
+  #     - app-api
+
+volumes:
+  sqlsystem:
+  sqldata:
+  sqllog:
+  sqlbackup:
+
+networks:
+  proxy:
+    driver: bridge

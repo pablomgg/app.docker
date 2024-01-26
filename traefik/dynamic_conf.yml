@@ -1,0 +1,65 @@
+http:
+
+  ## EXTERNAL ROUTING EXAMPLE - Only use if you want to proxy something manually ##
+  routers:
+    frontend1:
+      entryPoints:
+        - web
+      rule: 'Host(`app-api.localhost`)'
+      service: backend1
+      # middlewares:
+      #   - "auth"  
+    frontend2:
+      entryPoints:
+        - web
+      rule: 'Host(`app-front.localhost`)'
+      service: backend2
+      # middlewares:
+      #   - "auth"
+
+  ## SERVICES EXAMPLE ##
+  services:
+    backend1:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:9010
+    backend2:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:4200
+
+  ## MIDDLEWARES ##
+  middlewares:
+    # Only Allow Local networks
+    # local-ipwhitelist:
+    #   ipWhiteList:
+    #     sourceRange: 
+    #       - 127.0.0.1/32 # localhost
+    #       - 192.168.1.1/24 # LAN Subnet
+  
+    # Authelia guard
+    auth:
+      forwardauth:
+        address: http://host.docker.internal:8080/authorize
+        trustForwardHeader: true
+        authResponseHeaders:
+          - Remote-User
+          - Remote-Groups
+          - Remote-Name
+          - Remote-Email
+  
+    # Authelia basic auth guard
+    auth-basic:
+      forwardauth:
+        address: http://auth:9091/api/verify?auth=basic # replace auth with your authelia container name
+        trustForwardHeader: true
+        authResponseHeaders:
+          - Remote-User
+          - Remote-Groups
+          - Remote-Name
+          - Remote-Email
+
+    secured:
+      chain:
+        middlewares:
+          - auth@file
